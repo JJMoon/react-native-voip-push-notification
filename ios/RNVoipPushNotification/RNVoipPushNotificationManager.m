@@ -56,7 +56,6 @@ static NSString *RCTCurrentAppBackgroundState()
 @end
 
 @implementation RNVoipPushNotificationManager {
-    BOOL isJsReady;
     NSDictionary * userInfo;
 }
 
@@ -210,11 +209,9 @@ static NSMutableDictionary<NSString *, RNVoipPushNotificationCompletion> *comple
 {
     NSLog(@"[RNVoipPushNotificationManager] handleRemoteNotificationReceived notification.userInfo = %@, %d", notification.userInfo, isJsReady);
     
-    if (isJsReady)
-        [_bridge.eventDispatcher sendDeviceEventWithName:@"voipRemoteNotificationReceived"
-                                                    body:notification.userInfo];
-    else
-        userInfo = notification.userInfo;
+    [_bridge.eventDispatcher sendDeviceEventWithName:@"voipRemoteNotificationReceived"
+                                                body:notification.userInfo];
+    userInfo = notification.userInfo;
 }
 
 + (void)addCompletionHandler:(NSString *)uuid completionHandler:(RNVoipPushNotificationCompletion)completionHandler
@@ -282,7 +279,6 @@ RCT_EXPORT_METHOD(presentLocalNotification:(UILocalNotification *)notification)
 RCT_EXPORT_METHOD(setJsReady)
 {
     NSLog(@"Set JS Ready ..");
-    isJsReady = true;
     if (userInfo != nil)
         [_bridge.eventDispatcher sendDeviceEventWithName:@"voipRemoteNotificationReceived"
                                                     body:userInfo];
